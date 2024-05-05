@@ -5,8 +5,8 @@ from customtkinter import *
 menu = CTk()
 menu.title('Calculadora')
 
-width = 300
-height = 500
+width = 200
+height = 314
 
 # armazena o numero do mostradpr
 nmr_mostrador = ["0"]
@@ -17,6 +17,19 @@ resultado = []
 # armazena a conta da operação
 conta= []
 status_comma = [False]
+
+def testaNmr(n):
+    n_str = str(n)
+    posi = n_str.find('.')
+
+    if posi != -1:
+        conferir = n_str[posi + 1:]
+        if conferir.rstrip('0') == '':
+            n_str = n_str[:posi]
+    else:
+        conferir = ''
+
+    return n_str
 def add_comma(status_comma, n,m):
     if not status_comma[0]:
         status_comma[0] = True
@@ -28,8 +41,6 @@ def add_comma(status_comma, n,m):
 def limpaVisor(status_comma, m, n,c,r):
     r.clear()
     c.clear()
-    # pn.clear()
-    # pn.append("0")
     n.clear()
     n.append('0')
     status_comma[0] = False
@@ -37,21 +48,16 @@ def limpaVisor(status_comma, m, n,c,r):
 
 def formata_nmr(n):
     nmr_formatado = ''.join(n)
-    print(nmr_formatado)
     return nmr_formatado
 
 def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
     status_c[0] = False
-    print('cheguei na operacao')
-    print(nmr_mostrador)
-    print(f'testando nm_mostrador {nmr_mostrador}')
     if op in '+-x÷':
         if '+' in conta or '-' in conta or 'x' in conta or '÷' in conta:
 
             nmr1 = conta[0]
             operador = conta[1]
             nmr2 = ''.join(nmr_mostrador)
-            print(nmr2)
 
             if operador == '+':
                 resp = float(nmr1) + float(nmr2)
@@ -63,22 +69,16 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
             else:
                 resp = float(nmr1) / float(nmr2)
 
-            resposta = str(resp)
-            print(f'estou aqui {resposta}')
+            resposta = str(testaNmr(resp))
             resultado.append(resposta)
-            print(resultado)
             nmr_mostrador.clear()
             nmr_mostrador.append('0')
             conta.clear()
-            print(conta)
             conta.append(resposta)
             conta.append(op)
-            print(conta)
             mostrador.configure(text=resposta)
 
         else:
-            print(nmr_mostrador)
-            print('to aqui')
             nmr1 = ''.join(nmr_mostrador)
             conta.append(nmr1)
             conta.append(op)
@@ -86,16 +86,13 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
             nmr_mostrador.clear()
             nmr_mostrador.append('0')
 
-            print(conta)
 
     elif op == '=':
         try:
             # resultado.clear()
-            print(conta)
             nmr1 = conta[0]
             operador = conta[1]
             nmr2 = ''.join(nmr_mostrador)
-            print(f'estou aqui na operação com "=" {nmr2}')
 
             if operador == '+':
                 resp = float(nmr1) + float(nmr2)
@@ -103,26 +100,23 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
                 resp = float(nmr1) - float(nmr2)
             elif operador == 'x':
                 resp = float(nmr1) * float(nmr2)
-            # elif operador == '÷':
             else:
                 resp = float(nmr1) / float(nmr2)
 
-            resp = str(resp)
+            resp = str(testaNmr(resp))
 
             resultado.append(resp)
-            print(resultado)
             mostrador.configure(text=resp)
 
             conta.clear()
             nmr_mostrador.clear()
             nmr_mostrador.append(resp)
-            print(f'mostrando nmr_mostrador na operação "=" {nmr_mostrador}')
         except IndexError:
             print('testando se chega aqui ou a "conta ta vazia"')
 
 def visor(n):
-    mostrador = CTkLabel(container_visor, width=200, height=50, text=n, anchor='e', font=('CTkFont', 20))
-    mostrador.pack(expand=True, padx=(0, 20))
+    mostrador = CTkLabel(container_visor, width=190, height=60, text=n, anchor='e', font=('CTkFont', 30), bg_color='transparent')
+    mostrador.pack(expand=True, padx=5)
 
     return mostrador
 
@@ -141,9 +135,32 @@ def addN(n, c, nmr_adc, mostrador):
     mostrador.configure(text=nmr)
     n.clear()
     n.append(nmr)
-    # print(pn)
 
+def inverte_valor(nmr, mostrador):
+    if nmr[0] != '0':
+        if '-' not in nmr[0]:
+            nmr.insert(0, "-")
+            nmr_formatado = ''.join(nmr)
+            nmr.clear()
+            nmr.append(nmr_formatado)
+        else:
+            aux = list(nmr[0])
+            aux.pop(0)
+            nmr_formatado = ''.join(aux)
+            nmr.clear()
+            nmr.append(nmr_formatado)
 
+    mostrador.configure(text=nmr)
+
+def porcentagem(nmr, mostrador):
+    aux = nmr[0]
+    resp = float(aux) / 100
+
+    resultado = testaNmr(resp)
+
+    nmr.clear()
+    nmr.append(resultado)
+    mostrador.configure(text=resultado)
 
 # nmr_mostrador_formatado = testaNmr(nmr_mostrador)
 nmr_mostrador_formatado = formata_nmr(nmr_mostrador)
@@ -170,7 +187,7 @@ menu.geometry(f'{width}x{height}')
 container_Principal = customtkinter.CTkFrame(menu,width=width,height=height)
 container_Principal.pack(expand=True)
 
-container_visor = customtkinter.CTkFrame(container_Principal,width=200, height=60)
+container_visor = customtkinter.CTkFrame(container_Principal,width=190, height=60)
 container_visor.pack(expand=True)
 
 container_nmr_sup = customtkinter.CTkFrame(container_Principal,width=200, height=50)
@@ -190,11 +207,11 @@ container_nmr_inf.pack(expand=True, side='bottom')
 
 mostrador = visor(nmr_mostrador_formatado)
 
-btn_div = customtkinter.CTkButton(container_nmr_sup, text=sim_div, width=50, height=50, border_width=1, border_color='white', command= lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_div))
+btn_div = customtkinter.CTkButton(container_nmr_sup, text=sim_div, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_div))
 btn_div.pack(side='right', anchor='e')
-btn_porc = customtkinter.CTkButton(container_nmr_sup, text='%', width=50, height=50, border_width=1, border_color='white')
+btn_porc = customtkinter.CTkButton(container_nmr_sup, text='%', width=50, height=50, border_width=1, border_color='white', command=lambda: porcentagem(nmr_mostrador, mostrador))
 btn_porc.pack(side='right', anchor='center')
-btn_invert = customtkinter.CTkButton(container_nmr_sup, text='+/-', width=50, height=50, border_width=1, border_color='white')
+btn_invert = customtkinter.CTkButton(container_nmr_sup, text='+/-', width=50, height=50, border_width=1, border_color='white', command=lambda: inverte_valor(nmr_mostrador,mostrador))
 btn_invert.pack(side='right', anchor='center')
 btn_clear = customtkinter.CTkButton(container_nmr_sup, text='C', width=50, height=50, border_width=1, border_color='white', command=lambda: limpaVisor(status_comma, mostrador, nmr_mostrador,conta,resultado))
 btn_clear.pack(side='left', anchor='w')
