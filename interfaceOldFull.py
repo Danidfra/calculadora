@@ -207,6 +207,7 @@ container_nmr_inf.pack(expand=True, side='bottom')
 
 mostrador = visor(nmr_mostrador_formatado)
 
+
 btn_div = customtkinter.CTkButton(container_nmr_sup, text=sim_div, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_div))
 btn_div.pack(side='right', anchor='e')
 btn_porc = customtkinter.CTkButton(container_nmr_sup, text='%', width=50, height=50, border_width=1, border_color='white', command=lambda: porcentagem(nmr_mostrador, mostrador))
