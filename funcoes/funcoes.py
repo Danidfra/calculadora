@@ -52,8 +52,8 @@ def formata_nmr(n):
     return nmr_formatado
 
 def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
-    status_c[0] = False
     if op in '+-x÷':
+        status_c[0] = False
         if '+' in conta or '-' in conta or 'x' in conta or '÷' in conta:
 
             nmr1 = conta[0]
@@ -112,6 +112,7 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
             conta.clear()
             nmr_mostrador.clear()
             nmr_mostrador.append(resp)
+            status_resultado.append(True)
         except IndexError:
             print('testando se chega aqui ou a "conta ta vazia"')
 

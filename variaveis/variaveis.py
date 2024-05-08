@@ -4,6 +4,7 @@ nmr_mostrador = ["0"]
 # nmr_para_operar = ["0"]
 # armazena o resultado da operação
 resultado = []
+status_resultado = []
 # armazena a conta da operação
 conta= []
 status_comma = [False]
