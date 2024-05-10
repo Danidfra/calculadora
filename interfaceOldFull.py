@@ -14,6 +14,7 @@ nmr_mostrador = ["0"]
 # nmr_para_operar = ["0"]
 # armazena o resultado da operação
 resultado = []
+status_resultado = [False]
 # armazena a conta da operação
 conta= []
 status_comma = [False]
@@ -32,25 +33,39 @@ def testaNmr(n):
     return n_str
 def add_comma(status_comma, n,m):
     if not status_comma[0]:
-        status_comma[0] = True
-        n.append('.')
-        nmr_mostrador = ''.join(n)
-        m.configure(text=nmr_mostrador)
+        if not status_resultado[0]:
+            status_comma[0] = True
+            n.append('.')
+            nmr_mostrador = ''.join(n)
+            m.configure(text=nmr_mostrador)
 
 # Conferir Visor
-def limpaVisor(status_comma, m, n,c,r):
+def limpaVisor(status_comma, m, n,c,r,sr):
+    print(status_comma)
+    print(sr)
+    print(r)
+    print(c)
+    print(n)
+
     r.clear()
     c.clear()
     n.clear()
     n.append('0')
     status_comma[0] = False
+    sr[0] = False
     m.configure(text=n)
+
+    print(status_comma)
+    print(sr)
+    print(r)
+    print(c)
+    print(n)
 
 def formata_nmr(n):
     nmr_formatado = ''.join(n)
     return nmr_formatado
 
-def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
+def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op, status_resultado):
     status_c[0] = False
     if op in '+-x÷':
         if '+' in conta or '-' in conta or 'x' in conta or '÷' in conta:
@@ -77,6 +92,7 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
             conta.append(resposta)
             conta.append(op)
             mostrador.configure(text=resposta)
+            status_resultado[0] = False
 
         else:
             nmr1 = ''.join(nmr_mostrador)
@@ -111,6 +127,7 @@ def operacao(nmr_mostrador, conta, mostrador, resultado, status_c, op):
             conta.clear()
             nmr_mostrador.clear()
             nmr_mostrador.append(resp)
+            status_resultado[0] = True
         except IndexError:
             print('testando se chega aqui ou a "conta ta vazia"')
 
@@ -120,21 +137,41 @@ def visor(n):
 
     return mostrador
 
-def addN(n, c, nmr_adc, mostrador):
-    if c[0]:
-        n.append(nmr_adc)
+def addN(n, c, nmr_adc, mostrador, status_resultado):
+    if not status_resultado[0]:
+        if c[0]:
+            n.append(nmr_adc)
+        else:
+            if n[0] == '0':
+                n[0] = nmr_adc
+            else:
+                n.append(nmr_adc)
+
+        nmr = ''.join(n)
+
+        # nmr_mostrador = testaNmr(nmr)
+        mostrador.configure(text=nmr)
+        n.clear()
+        n.append(nmr)
     else:
+        # if c[0]:
+        #     n.append(nmr_adc)
+        # else:
         if n[0] == '0':
             n[0] = nmr_adc
+            status_resultado[0] = False
         else:
+            if status_resultado:
+                n.clear()
             n.append(nmr_adc)
+            status_resultado[0] = False
 
-    nmr = ''.join(n)
+        nmr = ''.join(n)
 
-    # nmr_mostrador = testaNmr(nmr)
-    mostrador.configure(text=nmr)
-    n.clear()
-    n.append(nmr)
+        # nmr_mostrador = testaNmr(nmr)
+        mostrador.configure(text=nmr)
+        n.clear()
+        n.append(nmr)
 
 def inverte_valor(nmr, mostrador):
     if nmr[0] != '0':
@@ -208,16 +245,16 @@ container_nmr_inf.pack(expand=True, side='bottom')
 mostrador = visor(nmr_mostrador_formatado)
 
 
-btn_div = customtkinter.CTkButton(container_nmr_sup, text=sim_div, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_div))
+btn_div = customtkinter.CTkButton(container_nmr_sup, text=sim_div, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_div, status_resultado))
 btn_div.pack(side='right', anchor='e')
 btn_porc = customtkinter.CTkButton(container_nmr_sup, text='%', width=50, height=50, border_width=1, border_color='white', command=lambda: porcentagem(nmr_mostrador, mostrador))
 btn_porc.pack(side='right', anchor='center')
 btn_invert = customtkinter.CTkButton(container_nmr_sup, text='+/-', width=50, height=50, border_width=1, border_color='white', command=lambda: inverte_valor(nmr_mostrador,mostrador))
 btn_invert.pack(side='right', anchor='center')
-btn_clear = customtkinter.CTkButton(container_nmr_sup, text='C', width=50, height=50, border_width=1, border_color='white', command=lambda: limpaVisor(status_comma, mostrador, nmr_mostrador,conta,resultado))
+btn_clear = customtkinter.CTkButton(container_nmr_sup, text='C', width=50, height=50, border_width=1, border_color='white', command=lambda: limpaVisor(status_comma, mostrador, nmr_mostrador,conta,resultado,status_resultado))
 btn_clear.pack(side='left', anchor='w')
 
-btn_times = customtkinter.CTkButton(container_nmr_789, text=sim_times, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_times))
+btn_times = customtkinter.CTkButton(container_nmr_789, text=sim_times, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_times, status_resultado))
 btn_times.pack(side='right', anchor='e')
 btn_9 = customtkinter.CTkButton(container_nmr_789, text=nmr9, width=50, height=50, border_width=1, border_color='white', command=lambda: addN(nmr_mostrador, status_comma, nmr9, mostrador))
 btn_9.pack(side='right', anchor='center')
@@ -226,7 +263,7 @@ btn_8.pack(side='right', anchor='center')
 btn_7 = customtkinter.CTkButton(container_nmr_789, text=nmr7, width=50, height=50, border_width=1, border_color='white', command=lambda: addN(nmr_mostrador, status_comma, nmr7, mostrador))
 btn_7.pack(side='left', anchor='w')
 
-btn_minus = customtkinter.CTkButton(container_nmr_456, text=sim_minus, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_minus))
+btn_minus = customtkinter.CTkButton(container_nmr_456, text=sim_minus, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_minus, status_resultado))
 btn_minus.pack(side='right', anchor='e')
 btn_6 = customtkinter.CTkButton(container_nmr_456, text=nmr6, width=50, height=50, border_width=1, border_color='white', command=lambda: addN(nmr_mostrador, status_comma, nmr6, mostrador))
 btn_6.pack(side='right', anchor='center')
@@ -235,7 +272,7 @@ btn_5.pack(side='right', anchor='center')
 btn_4 = customtkinter.CTkButton(container_nmr_456, text=nmr4, width=50, height=50, border_width=1, border_color='white', command=lambda: addN(nmr_mostrador, status_comma, nmr4, mostrador))
 btn_4.pack(side='left', anchor='w')
 
-btn_plus = customtkinter.CTkButton(container_nmr_123, text=sim_plus, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador,resultado , status_comma, sim_plus))
+btn_plus = customtkinter.CTkButton(container_nmr_123, text=sim_plus, width=50, height=50, border_width=1, border_color='white', command=lambda: operacao(nmr_mostrador, conta, mostrador,resultado , status_comma, sim_plus, status_resultado))
 btn_plus.pack(side='right', anchor='e')
 btn_3 = customtkinter.CTkButton(container_nmr_123, text=nmr3, width=50, height=50, border_width=1, border_color='white', command=lambda: addN(nmr_mostrador, status_comma, nmr3, mostrador))
 btn_3.pack(side='right', anchor='center')
@@ -248,7 +285,7 @@ btn_0 = customtkinter.CTkButton(container_nmr_inf, text=nmr0, width=100, height=
 btn_0.pack(side='left', anchor='w')
 btn_comma = customtkinter.CTkButton(container_nmr_inf, text=',', width=50, height=50, border_width=1, border_color='white', command= lambda: add_comma(status_comma, nmr_mostrador, mostrador))
 btn_comma.pack(side='left', anchor='w')
-btn_equals = customtkinter.CTkButton(container_nmr_inf, text=sim_equals, width=50, height=50,border_width=1, border_color='white', command= lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_equals))
+btn_equals = customtkinter.CTkButton(container_nmr_inf, text=sim_equals, width=50, height=50,border_width=1, border_color='white', command= lambda: operacao(nmr_mostrador, conta, mostrador, resultado, status_comma, sim_equals, status_resultado))
 btn_equals.pack(side='left', anchor='w')
 
 menu.mainloop()

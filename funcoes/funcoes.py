@@ -39,13 +39,26 @@ def add_comma(status_comma, n,m):
 
 
 # Conferir Visor
-def limpaVisor(status_comma, m, n,c,r):
+def limpaVisor(status_comma, m, n,c,r,sr):
+    print(status_comma)
+    print(sr)
+    print(r)
+    print(c)
+    print(n)
+
     r.clear()
     c.clear()
     n.clear()
     n.append('0')
     status_comma[0] = False
+    sr[0] = False
     m.configure(text=n)
+
+    print(status_comma)
+    print(sr)
+    print(r)
+    print(c)
+    print(n)
 
 def formata_nmr(n):
     nmr_formatado = ''.join(n)
@@ -165,7 +178,7 @@ def botoes_superiores(master, var_btn1, var_btn2, var_btn3, var_btn4, mostrador)
     btn_invert = customtkinter.CTkButton(master, text=var_btn3, width=50, height=50, border_width=1, border_color='white', command=lambda: inverte_valor(nmr_mostrador, mostrador))
     btn_invert.pack(side='right', anchor='center')
 
-    btn_clear = customtkinter.CTkButton(master, text=var_btn4, width=50, height=50, border_width=1, border_color='white', command=lambda: limpaVisor(status_comma, mostrador, nmr_mostrador, conta, resultado))
+    btn_clear = customtkinter.CTkButton(master, text=var_btn4, width=50, height=50, border_width=1, border_color='white', command=lambda: limpaVisor(status_comma, mostrador, nmr_mostrador, conta, resultado, status_resultado))
     btn_clear.pack(side='left', anchor='w')
 
     return btn_div, btn_porc, btn_invert, btn_clear
